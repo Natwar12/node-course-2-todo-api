@@ -34,6 +34,22 @@ app.post('/users',(req,res) => {
     });
 });
 
+app.get('/users', (req,res) => {
+    User.find().then((Myusers) => {
+        res.send({Myusers});
+    }, (e) => {
+        res.status(400).send(e);
+      })
+});
+
+app.get('/todos', (req,res) => {
+    Todo.find().then((MyTodos) => {
+        res.send({MyTodos});
+    }, (e) => {
+        res.status(400).send(e);
+      })
+});
+
 app.listen(3000, () => {
     console.log('Started on port 3000');
 });
