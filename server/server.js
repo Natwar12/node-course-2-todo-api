@@ -1,5 +1,5 @@
 const {ObjectID} = require('mongodb');
-
+const _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -81,6 +81,30 @@ app.delete('/users/:id', (req,res) => {
         }
         res.send({doc});
     }).catch((e)=> {
+        res.status(400).send();
+    });
+});
+
+app.patch('/users/:id', (req,res) => {
+    var id = req.params.id;
+    var body= _.pick(req.body, ['Email', 'completed']);
+
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+
+    if(_.isBoolean(body.completed) && body.completed) {
+        body.completedAt = new Date().getTime();
+    } else {
+        body.completed =false;
+        body.completedAt =null;
+    }
+    User.findByIdAndUpdate(id, {$set: body}, {new: true}).then((user) => {
+         if(!user){
+             return res.status(404).send();
+         }
+         res.send({user});
+    }).catch((e)=>{
         res.status(400).send();
     });
 });
